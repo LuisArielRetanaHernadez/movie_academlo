@@ -6,6 +6,10 @@ const { actorsRouter } = require('./routes/actors.route');
 const { globalError } = require('./ultis/globalErr');
 
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/api/v1/actor', actorsRouter);
 
 app.use(globalError);

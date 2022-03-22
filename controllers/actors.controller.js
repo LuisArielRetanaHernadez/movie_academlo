@@ -1,8 +1,13 @@
 /* eslint-disable linebreak-style */
+
+// firebase
+const { ref, uploadBytes } = require('firebase/storage');
+
 // ultis
 const { catchAsync } = require('../ultis/catchAsync');
 const { filterObj } = require('../ultis/filterObj');
 const { AppError } = require('../ultis/appError');
+const { storage } = require('../ultis/firebase');
 
 // model
 const { Actor } = require('../model/actor.model');
@@ -93,5 +98,38 @@ exports.putActorById = catchAsync(async (req, res, next) => {
     status: 'succes',
     message: 'update actor',
     data: {},
+  });
+});
+
+exports.createActor = catchAsync(async (req, res, next) => {
+  const {
+    name,
+    country,
+    rating,
+    age,
+  } = req.body;
+
+  if (
+    !name
+    || !country
+    || !rating
+    || age
+  ) return next(new AppError(404, 'datas incomplet'));
+
+  const imgRef = ref(storage, `imgs/${Date.now()}-${req.file.originalname}`);
+  const result = await uploadBytes(imgRef, req.file.buffer);
+
+  const newActor = await Actor.create({
+    name,
+    country,
+    rating,
+    age,
+    profilePic: result.metadata.fullPath,
+  });
+
+  return res.status(201).json({
+    status: 'axite',
+    data: newActor,
+    message: 'actor create exite',
   });
 });
