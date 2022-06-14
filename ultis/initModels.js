@@ -18,7 +18,7 @@ const initModel = () => {
 
   // Movie M <--> M Actor
   Movie.belongsToMany(Actor, { through: actInMve });
-  Actor.belongsToMany(Actor, { through: actInMve });
+  Actor.belongsToMany(Movie, { through: actInMve });
 };
 
 module.exports = { initModel };

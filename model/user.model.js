@@ -21,7 +21,7 @@ const User = bd.define(
     },
     status: {
       type: DataTypes.STRING(10),
-      defaultValue: 'active',
+      defaultValue: 'enabled',
       allowNull: false,
     },
     role: {
@@ -29,7 +29,6 @@ const User = bd.define(
       allowNull: false,
     },
   },
-  { timestamps: false },
 );
 
 module.exports = { User };

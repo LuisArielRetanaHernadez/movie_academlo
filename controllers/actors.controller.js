@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 
 // firebase
-const { ref, uploadBytes } = require('firebase/storage');
+const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 // ultis
 const { catchAsync } = require('../ultis/catchAsync');
@@ -15,9 +15,22 @@ const { Actor } = require('../model/actor.model');
 exports.getAllActors = catchAsync(async (req, res) => {
   const actors = await Actor.findAll({
     where: {
-      status: 'active',
+      status: 'enabled',
     },
   });
+
+  // const actorPromiseAll = Promise.all(
+  //   actors.map(async ({
+  //     name,
+  //     country,
+  //     rating,
+  //     age,
+  //     profilePic,
+  //   }) => {
+  //     const imgRef = ref(storage, profilePic);
+  //   })c
+  // );
+
   res.status(200).json({
     status: 'succes',
     data: actors,
@@ -30,10 +43,16 @@ exports.getActorById = catchAsync(async (req, res, next) => {
   const actor = await Actor.findOne({
     where: {
       id,
-      status: 'active',
+      status: 'enabled',
     },
   });
   if (!actor) return next(new AppError('actor non-existent', 404));
+
+  const imgRef = ref(storage, actor.profilePic);
+
+  const imgUrl = await getDownloadURL(imgRef);
+
+  actor.profilePic = imgUrl;
 
   return res.status(200).json({
     status: 'succes',
@@ -113,11 +132,16 @@ exports.createActor = catchAsync(async (req, res, next) => {
     !name
     || !country
     || !rating
-    || age
+    || !age
   ) return next(new AppError(404, 'datas incomplet'));
 
-  const imgRef = ref(storage, `imgs/${Date.now()}-${req.file.originalname}`);
+  const fileExtension = req.file.originalname.split('.')[1];
+
+  const imgRef = ref(storage, `imgs/actors/${Date.now()}-${name}.${fileExtension}`);
   const result = await uploadBytes(imgRef, req.file.buffer);
+
+  console.log('ref: ', imgRef);
+  console.log('resul: ', result);
 
   const newActor = await Actor.create({
     name,
@@ -129,7 +153,7 @@ exports.createActor = catchAsync(async (req, res, next) => {
 
   return res.status(201).json({
     status: 'axite',
-    data: newActor,
+    data: { newActor },
     message: 'actor create exite',
   });
 });

@@ -13,6 +13,7 @@ const Actor = bd.define(
     },
     name: {
       type: DataTypes.STRING(80),
+      unique: true,
       allowNull: false,
     },
     country: {
@@ -22,6 +23,7 @@ const Actor = bd.define(
     rating: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
     age: {
       type: DataTypes.INTEGER,
@@ -29,13 +31,13 @@ const Actor = bd.define(
     },
     profilePic: {
       type: DataTypes.STRING(250),
+      allowNull: false,
     },
     status: {
       type: DataTypes.STRING(10),
-      defaultValue: 'active',
+      defaultValue: 'enabled',
     },
   },
-  { timestamps: false },
 );
 
 module.exports = { Actor };

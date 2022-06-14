@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/v1/actor', actorsRouter);
-
+app.use('/api/v1/actors', actorsRouter);
 app.use(globalError);
+
 module.exports = { app };

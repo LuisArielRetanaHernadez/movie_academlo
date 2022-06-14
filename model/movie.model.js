@@ -36,7 +36,7 @@ const Movie = bd.define(
     },
     status: {
       type: DataTypes.STRING(10),
-      defaultValue: 'active',
+      defaultValue: 'enabled',
     },
   },
 );
